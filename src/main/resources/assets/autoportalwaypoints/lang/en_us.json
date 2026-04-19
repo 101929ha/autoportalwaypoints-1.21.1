@@ -1,0 +1,13 @@
+{
+  "itemGroup.autoportalwaypoints": "Example Mod Tab",
+  "block.autoportalwaypoints.example_block": "Example Block",
+  "item.autoportalwaypoints.example_item": "Example Item",
+
+  "autoportalwaypoints.configuration.title": "Auto Portal Waypoints Configs",
+  "autoportalwaypoints.configuration.section.autoportalwaypoints.common.toml": "Auto Portal Waypoints Configs",
+  "autoportalwaypoints.configuration.section.autoportalwaypoints.common.toml.title": "Auto Portal Waypoints Configs",
+  "autoportalwaypoints.configuration.items": "Item List",
+  "autoportalwaypoints.configuration.logDirtBlock": "Log Dirt Block",
+  "autoportalwaypoints.configuration.magicNumberIntroduction": "Magic Number Text",
+  "autoportalwaypoints.configuration.magicNumber": "Magic Number"
+}
