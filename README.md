@@ -12,6 +12,8 @@ Have you dived into a Nether portal, wandered around and lost your way back? Thi
 | Immersive Portals for (Neo)Forge | ❌            |
 | Xaero's (Mini/World) Map         | ❌            |
 
+Currently only avilable for NeoForge 1.21.1
+
 Installation information
 =======
 
