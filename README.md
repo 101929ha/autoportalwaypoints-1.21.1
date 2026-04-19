@@ -1,4 +1,17 @@
 
+Auto Portal Waypoints
+=======
+Have you dived into a Nether portal, wandered around and lost your way back? This mod is for you! Automatically adds a waypoint to JourneyMap whenever you exit a portal.
+
+
+|Mod Compatibility||
+| ---                              | ---           |
+| JourneyMap                       | ✅ (required) |
+| Infinite Dimensions              | ✅            |
+| Create: Northstar - Redux        | ✅            |
+| Immersive Portals for (Neo)Forge | ❌            |
+| Xaero's (Mini/World) Map         | ❌            |
+
 Installation information
 =======
 
