@@ -235,7 +235,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     public static void chunkLoad(ChunkEvent.Load event) {
     	if(waitingForChunkLoad && Minecraft.getInstance().player != null) {
     		level = Minecraft.getInstance().player.level();
-    		if(level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY() != level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY()) { //XXX MOTION_BLOCKING_NO_LEAVES seems to be bugged and always shows the lowest y coord, so this tells me if the chunk is loaded
+    		if(level.isLoaded(Minecraft.getInstance().player.blockPosition())) { //Check if the chunk is loaded so that the heightmap can be read
     			waitingForChunkLoad = false;
     			waitingForNextTick = false;
     			AutoPortalWaypoints.LOGGER.info("Chunk loaded, y="+level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY()+" vs y= "+level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY());
