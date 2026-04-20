@@ -18,6 +18,7 @@ import java.util.List;
 import journeymap.api.v2.client.IClientAPI;
 import journeymap.api.v2.client.IClientPlugin;
 import journeymap.api.v2.client.event.MappingEvent;
+import journeymap.api.v2.common.event.ClientEventRegistry;
 import journeymap.api.v2.common.waypoint.Waypoint;
 import journeymap.api.v2.common.waypoint.WaypointFactory;
 import journeymap.api.v2.common.waypoint.WaypointGroup;
@@ -257,8 +258,8 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     
   //public static void clientEvent(ClientEvent event) {
     //@SubscribeEvent
-    public static void mappingStageEvent(MappingEvent event) {
-    	//AutoPortalWaypoints.LOGGER.info("JM triggered");
+    public void mappingStageEvent(MappingEvent event) {
+    	AutoPortalWaypoints.LOGGER.info("JM triggered");
     	if (jmAPI.getWaypointGroups(AutoPortalWaypoints.MODID).equals(null)); // If we haven't made a WaypointGroup yet
     		jmAPI.addWaypointGroup(waypointgroup); //FIXME
     }
@@ -289,7 +290,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
         
         //NeoForge.EVENT_BUS.register(this);
         
-        //ClientEventRegistry.MAPPING_EVENT.subscribe(AutoPortalWaypoints.MODID, this::mappingStageEvent);
+        ClientEventRegistry.MAPPING_EVENT.subscribe(AutoPortalWaypoints.MODID, this::mappingStageEvent);
         
 	}
     
