@@ -1,5 +1,5 @@
 package com._101929ha.autoportalwaypoints;
-//TODO set up a waypoint group 
+
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceKey;
@@ -55,7 +55,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	static List<ResourceKey<Level>> planets = new ArrayList<>(); //For dimensions that are accessed by falling from the sky
 	
 
-	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "Portals"); //FIXME
+	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "Portals");
     //public AutoPortalWaypointsClient(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
@@ -199,7 +199,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     			
     			if (!isDuplicateWaypoint(Minecraft.getInstance().player.blockPosition(), destinationDim)) { //Make sure there isn't already a waypoint there
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true)); //Make waypoint at destination portal
-    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true)); //FIXME
+    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
     				AutoPortalWaypoints.LOGGER.info("Portal marked at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim);
     			} else {
     				AutoPortalWaypoints.LOGGER.info("Attempted to mark portal at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim + ", but another waypoint is too close");
@@ -235,13 +235,13 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     public static void chunkLoad(ChunkEvent.Load event) {
     	if(waitingForChunkLoad && Minecraft.getInstance().player != null) {
     		level = Minecraft.getInstance().player.level();
-    		if(level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY() != level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY()) { //MOTION_BLOCKING_NO_LEAVES seems to be bugged and always shows the lowest y coord, so this tells me if the chunk is loaded
+    		if(level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY() != level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY()) { //XXX MOTION_BLOCKING_NO_LEAVES seems to be bugged and always shows the lowest y coord, so this tells me if the chunk is loaded
     			waitingForChunkLoad = false;
     			waitingForNextTick = false;
     			AutoPortalWaypoints.LOGGER.info("Chunk loaded, y="+level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY()+" vs y= "+level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY());
     			if (!isDuplicateWaypoint(level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), destinationDim)) { //Make sure there isn't already a waypoint there
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true)); //Make waypoint at destination portal
-    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true)); //FIXME
+    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));
     				AutoPortalWaypoints.LOGGER.info("Spaceship marked at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim);
     			} else {
     				AutoPortalWaypoints.LOGGER.info("Attempted to mark spaceship at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim + ", but another waypoint is too close");
@@ -259,13 +259,13 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
   //public static void clientEvent(ClientEvent event) {
     //@SubscribeEvent
     public void mappingStageEvent(MappingEvent event) {
-    	AutoPortalWaypoints.LOGGER.info("JM triggered");
+    	//AutoPortalWaypoints.LOGGER.info("JM triggered");
     	if (jmAPI.getWaypointGroups(AutoPortalWaypoints.MODID).equals(null)); // If we haven't made a WaypointGroup yet
-    		jmAPI.addWaypointGroup(waypointgroup); //FIXME
+    		jmAPI.addWaypointGroup(waypointgroup);
     }
     
     /**
-    @SubscribeEvent
+    //@SubscribeEvent
     //public static void postTransition(PostDimensionTransition event) {
     public static void postTransition(firePlayerChangedDimensionEvent event) {
     	if (!isDuplicateWaypoint(Minecraft.getInstance().player.blockPosition(), destinationDim)) {
@@ -281,17 +281,13 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	@Override
 	public void initialize(final IClientAPI jmClientApi) {
 		this.jmAPI = jmClientApi;
-		
+		ClientEventRegistry.MAPPING_EVENT.subscribe(AutoPortalWaypoints.MODID, this::mappingStageEvent);
 		
         //waypointgroup.setName("Portals");
         //waypointgroup.setPersistent(true);
         AutoPortalWaypoints.LOGGER.info("Initialized " + getClass().getName());
         
-        
         //NeoForge.EVENT_BUS.register(this);
-        
-        ClientEventRegistry.MAPPING_EVENT.subscribe(AutoPortalWaypoints.MODID, this::mappingStageEvent);
-        
 	}
     
 }
