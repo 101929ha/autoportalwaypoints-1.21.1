@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import journeymap.api.v2.client.IClientAPI;
 import journeymap.api.v2.client.IClientPlugin;
+import journeymap.api.v2.client.event.MappingEvent;
 import journeymap.api.v2.common.waypoint.Waypoint;
 import journeymap.api.v2.common.waypoint.WaypointFactory;
 import journeymap.api.v2.common.waypoint.WaypointGroup;
@@ -73,8 +74,8 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     @SubscribeEvent
     public static void changedDimensions(PlayerChangedDimensionEvent event)
     {
-    	AutoPortalWaypoints.LOGGER.info("Name: "+ waypointgroup.getName());
-    	AutoPortalWaypoints.LOGGER.info("Mod ID: "+ waypointgroup.getModId());
+    	//AutoPortalWaypoints.LOGGER.info("Name: "+ waypointgroup.getName());
+    	//AutoPortalWaypoints.LOGGER.info("Mod ID: "+ waypointgroup.getModId());
     	if (exclusions.isEmpty()) { //exclusions should always contain Level.END. If it doesn't, then this is the first time changing dimensions. Please don't change dependency mods after changing dimensions.
     		exclusions.add(Level.END);
             AutoPortalWaypoints.LOGGER.info("exclusions: "+exclusions.isEmpty());
@@ -254,11 +255,13 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     }
     
     
-    /**@SubscribeEvent
-    //public static void mappingStageEvent(MappingEvent.Stage event) {
-    public static void clientEvent(ClientEvent event) {
-    	AutoPortalWaypoints.LOGGER.info("JM triggered");
-    }*/
+  //public static void clientEvent(ClientEvent event) {
+    //@SubscribeEvent
+    public static void mappingStageEvent(MappingEvent event) {
+    	//AutoPortalWaypoints.LOGGER.info("JM triggered");
+    	if (jmAPI.getWaypointGroups(AutoPortalWaypoints.MODID).equals(null)); // If we haven't made a WaypointGroup yet
+    		jmAPI.addWaypointGroup(waypointgroup); //FIXME
+    }
     
     /**
     @SubscribeEvent
@@ -277,7 +280,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	@Override
 	public void initialize(final IClientAPI jmClientApi) {
 		this.jmAPI = jmClientApi;
-		jmAPI.addWaypointGroup(waypointgroup); //FIXME
+		
 		
         //waypointgroup.setName("Portals");
         //waypointgroup.setPersistent(true);
