@@ -53,7 +53,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	static List<ResourceKey<Level>> planets = new ArrayList<>(); //For dimensions that are accessed by falling from the sky
 	
 
-	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "Portals");
+	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "Portals"); //FIXME
     //public AutoPortalWaypointsClient(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
@@ -197,7 +197,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     			
     			if (!isDuplicateWaypoint(Minecraft.getInstance().player.blockPosition(), destinationDim)) { //Make sure there isn't already a waypoint there
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true)); //Make waypoint at destination portal
-    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
+    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true)); //FIXME
     				AutoPortalWaypoints.LOGGER.info("Portal marked at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim);
     			} else {
     				AutoPortalWaypoints.LOGGER.info("Attempted to mark portal at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim + ", but another waypoint is too close");
@@ -239,7 +239,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     			AutoPortalWaypoints.LOGGER.info("Chunk loaded, y="+level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY()+" vs y= "+level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY());
     			if (!isDuplicateWaypoint(level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), destinationDim)) { //Make sure there isn't already a waypoint there
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true)); //Make waypoint at destination portal
-    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));
+    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true)); //FIXME
     				AutoPortalWaypoints.LOGGER.info("Spaceship marked at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim);
     			} else {
     				AutoPortalWaypoints.LOGGER.info("Attempted to mark spaceship at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim + ", but another waypoint is too close");
@@ -277,7 +277,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	@Override
 	public void initialize(final IClientAPI jmClientApi) {
 		this.jmAPI = jmClientApi;
-		jmAPI.addWaypointGroup(waypointgroup);
+		jmAPI.addWaypointGroup(waypointgroup); //FIXME
 		
         //waypointgroup.setName("Portals");
         //waypointgroup.setPersistent(true);
