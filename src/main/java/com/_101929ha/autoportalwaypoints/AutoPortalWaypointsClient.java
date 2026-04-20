@@ -1,57 +1,26 @@
 package com._101929ha.autoportalwaypoints;
 //TODO set up a waypoint group 
-//import java.lang.System;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
-//import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceKey;
-//import net.minecraft.server.MinecraftServer;
-//import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
-//import net.minecraft.world.level.block.LevelEvent;
-//import net.minecraft.world.level.block.Portal;
-//import net.minecraft.world.level.portal.DimensionTransition.PostDimensionTransition;
-//import net.minecraft.world.entity.PortalProcessor;
-//import net.minecraft.world.level.dimension.*;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
-//import net.neoforged.fml.ModContainer;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-//import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
-//import net.neoforged.neoforge.client.gui.ConfigurationScreen;
-//import net.neoforged.neoforge.client.gui.IConfigScreenFactory;
-//import net.neoforged.neoforge.common.NeoForge;
-//import net.neoforged.neoforge.event.entity.EntityTravelToDimensionEvent;
-//import net.neoforged.neoforge.event.entity.player.*;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent; //PlayerChangedDimensionEvent in PlayerEvent
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
-//import net.neoforged.neoforge.event.tick.ServerTickEvent;
-
 import java.util.ArrayList;
-//import java.awt.image.renderable.ContextualRenderedImageFactory;
 import java.util.List;
-//import java.util.function.Consumer;
-
 import journeymap.api.v2.client.IClientAPI;
 import journeymap.api.v2.client.IClientPlugin;
-//import journeymap.api.v2.common.event.ClientEventRegistry;
 import journeymap.api.v2.common.waypoint.Waypoint;
 import journeymap.api.v2.common.waypoint.WaypointFactory;
-//import journeymap.api.v2.common.waypoint.WaypointFactory.WaypointStore;
 import journeymap.api.v2.common.waypoint.WaypointGroup;
-
-//import journeymap.api.v2.client.event.MappingEvent;
-//import journeymap.api.v2.client.event.DisplayUpdateEvent;
-//import journeymap.api.v2.client.event.ClientEvent;
-//import com.lightning.northstar.world.dimension.*;
-//import com.lightning.northstar.client.*;
 import com.lightning.northstar.world.dimension.NorthstarDimensions;
-//import com.lightning.northstar.world.dimension.NorthstarPlanets;
-//import com.lightning.northstar.events.*;
 
 
 @journeymap.api.v2.common.JourneyMapPlugin(apiVersion = "2.0.0")
@@ -84,7 +53,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	static List<ResourceKey<Level>> planets = new ArrayList<>(); //For dimensions that are accessed by falling from the sky
 	
 
-	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "jm.waypoint.groups.portals");
+	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "Portals");
     //public AutoPortalWaypointsClient(ModContainer container) {
         // Allows NeoForge to create a config screen for this mod's configs.
         // The config screen is accessed by going to the Mods screen > clicking on your mod > clicking on config.
@@ -122,9 +91,6 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     	//Minecraft.getInstance().player.portalProcess.getEntryPosition();
     	//EntityTravelToDimensionEvent
     	//AutoPortalWaypoints.LOGGER.info("Entry pos: "+Minecraft.getInstance().player.portalProcess.getEntryPosition());
-    	//AutoPortalWaypoints.LOGGER.info("from: "+event.getFrom());
-    	//AutoPortalWaypoints.LOGGER.info("to: "+event.getTo());
-    	//AutoPortalWaypoints.LOGGER.info("to: "+event.toDim);
     	
     	//BlockPos pos = Minecraft.getInstance().player.getRelativePortalPosition(null, null)
     	//Minecraft.getInstance().player.blockPosition()
@@ -140,10 +106,6 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     	Minecraft.getInstance().player.portalProcess.portal;
     	//Minecraft.getInstance().player.portalProcess.getPortalDestination(null, null);
     	Minecraft.getInstance().player.portalProcess;
-    	Minecraft.getInstance().cameraEntity;
-    	Minecraft.getInstance().level.block.Portal;
-    	Minecraft.getInstance().level.getBlockEntity(null).por;
-    	Minecraft.getInstance().world;
     	*/
     	//portalWaypoint = new Waypoint(AutoPortalWaypoints.MODID);
     	//WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.portalProcess.getEntryPosition(), "portal" ,event.getFrom(), true);
@@ -329,9 +291,3 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	}
     
 }
-//public class EventHandler {
-	//@SubscribeEvent
-	
-//}
-
-//public class AutoPortalWaypoints
