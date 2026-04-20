@@ -3,7 +3,7 @@ Auto Portal Waypoints
 =======
 Have you dived into a Nether portal, wandered around and lost your way back? This mod is for you! Automatically adds a waypoint to JourneyMap whenever you exit a portal.
 
-Currently only avilable for NeoForge 1.21.1
+Currently only avilable for NeoForge 1.21.1, 1.21.11 and 26.1+
 
 |Mod Compatibility||
 | ---                                                       | ---           |
