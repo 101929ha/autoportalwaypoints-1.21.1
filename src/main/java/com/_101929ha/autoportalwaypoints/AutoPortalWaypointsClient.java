@@ -10,9 +10,10 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent; //PlayerChangedDimensionEvent in PlayerEvent
+//import net.neoforged.neoforge.event.entity.player.PlayerEvent.PlayerChangedDimensionEvent;
 import net.neoforged.neoforge.event.level.ChunkEvent;
 import net.neoforged.neoforge.event.tick.PlayerTickEvent;
+import net.neoforged.neoforge.client.event.ClientPlayerNetworkEvent;
 import java.util.ArrayList;
 import java.util.List;
 import journeymap.api.v2.client.IClientAPI;
@@ -71,15 +72,41 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
         AutoPortalWaypoints.LOGGER.info("HELLO FROM CLIENT SETUP");
         AutoPortalWaypoints.LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
     }*/
-    
-    @SubscribeEvent
-    public static void changedDimensions(PlayerChangedDimensionEvent event)
-    {
-    	//AutoPortalWaypoints.LOGGER.info("Name: "+ waypointgroup.getName());
-    	//AutoPortalWaypoints.LOGGER.info("Mod ID: "+ waypointgroup.getModId());
+	
+	@SubscribeEvent
+    public static void networkEvent(ClientPlayerNetworkEvent.Clone event) { //This is called whenever the player changes dimensions, so I can use it like a client-side PlayerChangedDimensionEvent event
+		if (event.getOldPlayer().getHealth() == event.getNewPlayer().getHealth()) { //i.e. teleported, not respawned
+			if (exclusions.isEmpty()) { //exclusions should always contain Level.END. If it doesn't, then this is the first time changing dimensions. Please don't change dependency mods after changing dimensions.
+	    		exclusions.add(Level.END);
+	            if (ModList.get().isLoaded("northstar")) {
+	            	exclusionsDestinationOnly.add(NorthstarDimensions.EARTH_ORBIT_DIM_KEY);
+	            	planets.add(NorthstarDimensions.MARS_DIM_KEY);
+	            	planets.add(NorthstarDimensions.MERCURY_DIM_KEY);
+	            	planets.add(NorthstarDimensions.MOON_DIM_KEY); //Yes, I know that the moon isn't a planet. This is just revenge for astrophysicists calling all post-Helium elements 'metals'.
+	            	planets.add(NorthstarDimensions.VENUS_DIM_KEY);
+	        	}
+	    	}
+			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Old dim:"+event.getOldPlayer().level().dimension()));
+			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Old pos:"+event.getOldPlayer().blockPosition()));
+			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("New dim:"+event.getNewPlayer().level().dimension()));
+			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("New pos:"+event.getNewPlayer().blockPosition()));
+			entryDim = event.getOldPlayer().level().dimension();
+			destinationDim = event.getNewPlayer().level().dimension();
+			
+			if (exclusions.contains(destinationDim) || exclusions.contains(entryDim) || exclusionsDestinationOnly.contains(destinationDim)){
+	    		AutoPortalWaypoints.LOGGER.info("This dimension change is ineligible for a portal");
+	    		return; //don't wait for dimension to load, therefore don't do anything when entering/exiting the End or when entering orbit
+	    	}
+	    	
+	    	waitingForNextTick = true;
+		}
+	}
+	
+	
+    /**@SubscribeEvent
+    public static void changedDimensions(PlayerChangedDimensionEvent event) {
     	if (exclusions.isEmpty()) { //exclusions should always contain Level.END. If it doesn't, then this is the first time changing dimensions. Please don't change dependency mods after changing dimensions.
     		exclusions.add(Level.END);
-            AutoPortalWaypoints.LOGGER.info("exclusions: "+exclusions.isEmpty());
             if (ModList.get().isLoaded("northstar")) {
             	exclusionsDestinationOnly.add(NorthstarDimensions.EARTH_ORBIT_DIM_KEY);
             	planets.add(NorthstarDimensions.MARS_DIM_KEY);
@@ -87,9 +114,19 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
             	planets.add(NorthstarDimensions.MOON_DIM_KEY); //Yes, I know that the moon isn't a planet. This is just revenge for astrophysicists calling all post-Helium elements 'metals'.
             	planets.add(NorthstarDimensions.VENUS_DIM_KEY);
         	}
-            AutoPortalWaypoints.LOGGER.info("exclusionsDestinationOnly: "+exclusionsDestinationOnly.isEmpty());
-            AutoPortalWaypoints.LOGGER.info("planets: "+planets.isEmpty());
     	}
+    	
+    	destinationDim = event.getTo();
+    	entryDim = event.getFrom();
+    	
+    	if (exclusions.contains(destinationDim) || exclusions.contains(entryDim) || exclusionsDestinationOnly.contains(destinationDim)){
+    		AutoPortalWaypoints.LOGGER.info("This dimension change is ineligible for a portal");
+    		return; //don't wait for dimension to load, therefore don't do anything when entering/exiting the End or when entering orbit
+    	}
+    	
+    	waitingForNextTick = true;
+    	//tickPause = 80; //Wait 80 ticks to ensure dimension change works
+    	
     	//Minecraft.getInstance().player.portalProcess.getEntryPosition();
     	//EntityTravelToDimensionEvent
     	//AutoPortalWaypoints.LOGGER.info("Entry pos: "+Minecraft.getInstance().player.portalProcess.getEntryPosition());
@@ -117,25 +154,13 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     		
     		//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, event.toDim, "portal" ,event.getFrom(), true));
     	}*/
-    	destinationDim = event.getTo();
-    	entryDim = event.getFrom();
-    	//Level end = minecraft:the_end>;
-    	//ResourceKey<Level> end = ResourceKey<minecraft:the_end>;
-    	
-    	if (exclusions.contains(destinationDim) || exclusions.contains(entryDim) || exclusionsDestinationOnly.contains(destinationDim)){
-    		AutoPortalWaypoints.LOGGER.info("This dimension change is ineligible for a portal");
-    		return; //don't wait for dimension to load, therefore don't do anything when entering/exiting the End or when entering orbit
-    	}
-    	//ResourceKey<Level> ertvsdf = NorthstarDimensions.EARTH_ORBIT_DIM_KEY;
     	
     	
     	/**
     	if (!isDuplicateWaypoint(entryBlockPos, event.getTo())) {
     		jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, entryBlockPos, "Portal" ,event.getTo(), true)); //For destination portal
-    	}*/
-    	waitingForNextTick = true;
-    	//tickPause = 80; //Wait 80 ticks to ensure dimension change works
-    }
+    	}
+    }*/
     
     /**
     @SubscribeEvent
@@ -170,10 +195,8 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     @SubscribeEvent
     public static void newTick(PlayerTickEvent.Post event) {
     	
-    	
     	if (waitingForNextTick && Minecraft.getInstance().player != null) { //Player has changed dimensions, now we need to wait for the dimension to load properly.
     		if (Minecraft.getInstance().player.level().dimension().equals(destinationDim)) { //Teleportation complete. Very important.
-    			
     			//level#getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, pos)
     			//tickPause = 80;
     			
@@ -198,8 +221,12 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     			
     			
     			if (!isDuplicateWaypoint(Minecraft.getInstance().player.blockPosition(), destinationDim)) { //Make sure there isn't already a waypoint there
+    				if (jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals") == null) { // If we haven't made a WaypointGroup yet
+    		    		jmAPI.addWaypointGroup(waypointgroup);
+    				}
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true)); //Make waypoint at destination portal
-    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
+    				jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals").addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
+    				//waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
     				AutoPortalWaypoints.LOGGER.info("Portal marked at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim);
     			} else {
     				AutoPortalWaypoints.LOGGER.info("Attempted to mark portal at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim + ", but another waypoint is too close");
@@ -238,10 +265,13 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     		if(level.isLoaded(Minecraft.getInstance().player.blockPosition())) { //Check if the chunk is loaded so that the heightmap can be read
     			waitingForChunkLoad = false;
     			waitingForNextTick = false;
-    			AutoPortalWaypoints.LOGGER.info("Chunk loaded, y="+level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()).getY()+" vs y= "+level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, Minecraft.getInstance().player.blockPosition()).getY());
     			if (!isDuplicateWaypoint(level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), destinationDim)) { //Make sure there isn't already a waypoint there
+    				if (jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals") == null) { // If we haven't made a WaypointGroup yet
+    		    		jmAPI.addWaypointGroup(waypointgroup);
+    				}
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true)); //Make waypoint at destination portal
-    				waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));
+    				jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals").addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));;
+    				//waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));
     				AutoPortalWaypoints.LOGGER.info("Spaceship marked at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim);
     			} else {
     				AutoPortalWaypoints.LOGGER.info("Attempted to mark spaceship at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim + ", but another waypoint is too close");
@@ -260,8 +290,9 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     //@SubscribeEvent
     public void mappingStageEvent(MappingEvent event) {
     	//AutoPortalWaypoints.LOGGER.info("JM triggered");
-    	if (jmAPI.getWaypointGroups(AutoPortalWaypoints.MODID).equals(null)); // If we haven't made a WaypointGroup yet
+    	if (jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals") == null) { // If we haven't made a WaypointGroup yet
     		jmAPI.addWaypointGroup(waypointgroup);
+    	}
     }
     
     /**
@@ -283,8 +314,6 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 		this.jmAPI = jmClientApi;
 		ClientEventRegistry.MAPPING_EVENT.subscribe(AutoPortalWaypoints.MODID, this::mappingStageEvent);
 		
-        //waypointgroup.setName("Portals");
-        //waypointgroup.setPersistent(true);
         AutoPortalWaypoints.LOGGER.info("Initialized " + getClass().getName());
         
         //NeoForge.EVENT_BUS.register(this);
