@@ -91,7 +91,7 @@ Have you dived into a Nether portal, wandered around and lost your way back? Thi
 [[dependencies.${mod_id}]]
     modId="journeymap"
     type="required"
-    versionRange="[1.21.1-6.0.0-beta.55,)" #Tested, this is the minimum viable version
+    versionRange="[1.21.1-6.0.0-beta.78,)" #Tested, this is the minimum viable version
     ordering="AFTER"
     side="BOTH"
 
@@ -99,6 +99,13 @@ Have you dived into a Nether portal, wandered around and lost your way back? Thi
     modId="northstar"
     type="optional"
     versionRange="[0.4.0,)" #This is the lowest version tested
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.${mod_id}]]
+    modId="stellaris"
+    type="optional"
+    versionRange="[1.0.2,)"
     ordering="NONE"
     side="BOTH"
 

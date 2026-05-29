@@ -24,7 +24,7 @@ license="All Rights Reserved"
 modId="autoportalwaypoints" #mandatory
 
 # The version number of the mod
-version="1.0.0" #mandatory
+version="1.0.1" #mandatory
 
 # A display name for the mod
 displayName="Auto Portal Waypoints" #mandatory
@@ -71,7 +71,7 @@ Have you dived into a Nether portal, wandered around and lost your way back? Thi
     # Optional field describing why the dependency is required or why it is incompatible
     # reason="..."
     # The version range of the dependency
-    versionRange="[21.1.200,)" #mandatory
+    versionRange="[21.1.1,)" #mandatory
     # An ordering relationship for the dependency.
     # BEFORE - This mod is loaded BEFORE the dependency
     # AFTER - This mod is loaded AFTER the dependency
@@ -84,21 +84,28 @@ Have you dived into a Nether portal, wandered around and lost your way back? Thi
     modId="minecraft"
     type="required"
     # This version range declares a minimum of the current minecraft version up to but not including the next major version
-    versionRange="[1.21.1]"
+    versionRange="[1.21.1],[1.21.11],[26.1,)"
     ordering="NONE"
     side="BOTH"
     
 [[dependencies.autoportalwaypoints]]
     modId="journeymap"
     type="required"
-    versionRange="[1.21.1-6.0.0-beta.50,)" #TODO find minimum viable version
-    ordering="NONE"
+    versionRange="[1.21.1-6.0.0-beta.78,)" #Tested, this is the minimum viable version
+    ordering="AFTER"
     side="BOTH"
 
 [[dependencies.autoportalwaypoints]]
     modId="northstar"
     type="optional"
-    versionRange="[0.5.4,)"
+    versionRange="[0.4.0,)" #This is the lowest version tested
+    ordering="NONE"
+    side="BOTH"
+
+[[dependencies.autoportalwaypoints]]
+    modId="stellaris"
+    type="optional"
+    versionRange="[1.0.2,)"
     ordering="NONE"
     side="BOTH"
 

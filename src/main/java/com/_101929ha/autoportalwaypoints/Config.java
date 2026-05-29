@@ -1,15 +1,5 @@
 package com._101929ha.autoportalwaypoints;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
-import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.fml.event.config.ModConfigEvent;
 import net.neoforged.neoforge.common.ModConfigSpec;
 
 // An example config class. This is not required, but it's a good idea to have one to keep your config organized.
@@ -23,6 +13,12 @@ public class Config {
     				"Increase this if using large portals (e.g. for Create trains)",
     				"Set to -1.0 to disable this mod")
     		.defineInRange("duplicateProximity", 3.0, -1.0, 10000.0);
+    
+    public static final ModConfigSpec.BooleanValue BEACONS_ENABLED = BUILDER
+    		.comment("",
+    				"Whether the 'Portals' WaypointGroup will have beacons enabled",
+    				"Beacons can ruin the experience of supported spaceship mods such as Create: Northstar - Redux")
+    		.define("beaconsEnabled", false);
     
     /**
     public static final ModConfigSpec.BooleanValue LOG_DIRT_BLOCK = BUILDER

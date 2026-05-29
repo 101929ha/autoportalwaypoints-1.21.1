@@ -2,7 +2,9 @@ package com._101929ha.autoportalwaypoints;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.levelgen.Heightmap;
 import net.neoforged.api.distmarker.Dist;
@@ -24,6 +26,7 @@ import journeymap.api.v2.common.waypoint.Waypoint;
 import journeymap.api.v2.common.waypoint.WaypointFactory;
 import journeymap.api.v2.common.waypoint.WaypointGroup;
 import com.lightning.northstar.world.dimension.NorthstarDimensions;
+import com.st0x0ef.stellaris.common.data.planets.*;
 
 
 @journeymap.api.v2.common.JourneyMapPlugin(apiVersion = "2.0.0")
@@ -49,11 +52,14 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	//static BlockPos destinationBlockPos;
 	static boolean waitingForNextTick = false;
 	static boolean waitingForChunkLoad = false;
-	static int tickPause = 0;
+	//static int tickPause = 0;
 	static Level level;
 	static List<ResourceKey<Level>> exclusions = new ArrayList<>(); //For any dimension that doesn't use the typical portal/return portal
 	static List<ResourceKey<Level>> exclusionsDestinationOnly = new ArrayList<>(); //Orbit doesn't have a surface, so this will disable the waypoint algorithm so it doesn't try to find land all the time
 	static List<ResourceKey<Level>> planets = new ArrayList<>(); //For dimensions that are accessed by falling from the sky
+	
+	static ResourceLocation netherPortalIcon = ResourceLocation.fromNamespaceAndPath("journeymap","textures/waypoint/icon/01_structures/jwi25portal_nether_lit.png");
+	static ResourceLocation flagIcon = ResourceLocation.fromNamespaceAndPath("journeymap","textures/waypoint/icon/00_markers/jwi13flag_full.png");
 	
 
 	static WaypointGroup waypointgroup = WaypointFactory.createWaypointGroup(AutoPortalWaypoints.MODID, "Portals");
@@ -85,6 +91,15 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 	            	planets.add(NorthstarDimensions.MOON_DIM_KEY); //Yes, I know that the moon isn't a planet. This is just revenge for astrophysicists calling all post-Helium elements 'metals'.
 	            	planets.add(NorthstarDimensions.VENUS_DIM_KEY);
 	        	}
+	            if (ModList.get().isLoaded("stellaris")) {
+	            	for (int i=0; i < StellarisData.getPlanets().size(); i++) {
+	            		
+	            		if(StellarisData.getPlanets().get(i).dimension().compareNamespaced(ResourceLocation.withDefaultNamespace("overworld")) != 0) { //If it's not overworld (because overworld is one of the planets)
+	            			planets.add(ResourceKey.create(Registries.DIMENSION, StellarisData.getPlanets().get(i).dimension()));
+	            		}
+	            	}
+	            	
+	            }
 	    	}
 			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Old dim:"+event.getOldPlayer().level().dimension()));
 			//Minecraft.getInstance().player.sendSystemMessage(Component.literal("Old pos:"+event.getOldPlayer().blockPosition()));
@@ -202,7 +217,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     			
     			if (planets.contains(destinationDim) || planets.contains(entryDim)){ //Spacecraft fall from y=1750, so we need to handle these differently
     				if (waitingForChunkLoad == false) { //Only want to print this once, rather than every tick :)
-    					AutoPortalWaypoints.LOGGER.info("Entering or exiting a Northstar dimension. Waiting for chunk to load before placing waypoint at surface level.");    					
+    					AutoPortalWaypoints.LOGGER.info("Entering or exiting a planet. Waiting for chunk to load before placing waypoint at surface level.");    					
     				}
     				waitingForChunkLoad = true;
     				/**try { //I'm not sure how space stations will be implemented, this should ensure no problems from getHeightmapPos
@@ -225,7 +240,12 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     		    		jmAPI.addWaypointGroup(waypointgroup);
     				}
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true)); //Make waypoint at destination portal
-    				jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals").addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
+    				Waypoint newWaypoint = WaypointFactory.createWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true);
+    				newWaypoint.setIconResourceLoctaion(netherPortalIcon);
+    				newWaypoint.setIconColor(8470739); //The same shade of purple as a nether portal
+    				
+    				jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals").addWaypoint(newWaypoint);
+    				
     				//waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, Minecraft.getInstance().player.blockPosition(), "Portal" , destinationDim, true));
     				AutoPortalWaypoints.LOGGER.info("Portal marked at " + Minecraft.getInstance().player.blockPosition() + " in " + destinationDim);
     			} else {
@@ -235,8 +255,8 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     		}
     	}
     	
-    	if (tickPause > 0) {
-    		tickPause--;
+    	//if (tickPause > 0) {
+    		//tickPause--;
     		//Minecraft.getInstance().player.level().dimension();
     		//AutoPortalWaypoints.LOGGER.info("Player location:"+Minecraft.getInstance().player.blockPosition());
     		//AutoPortalWaypoints.LOGGER.info("Player dimension:"+Minecraft.getInstance().player.level().dimension());
@@ -256,7 +276,7 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     			AutoPortalWaypoints.LOGGER.info(""+ level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING, new BlockPos(Minecraft.getInstance().player.blockPosition().getX(),0,Minecraft.getInstance().player.blockPosition().getZ())));
     			AutoPortalWaypoints.LOGGER.info(""+ level.getHeightmapPos(Heightmap.Types.MOTION_BLOCKING_NO_LEAVES, new BlockPos(Minecraft.getInstance().player.blockPosition().getX(),0,Minecraft.getInstance().player.blockPosition().getZ())));
     		}*/
-    	}
+    	//}
     }
     @SubscribeEvent
     public static void chunkLoad(ChunkEvent.Load event) {
@@ -270,7 +290,11 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
     		    		jmAPI.addWaypointGroup(waypointgroup);
     				}
     				//jmAPI.addWaypoint(AutoPortalWaypoints.MODID, WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true)); //Make waypoint at destination portal
-    				jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals").addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));;
+    				Waypoint newWaypoint = WaypointFactory.createWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true);
+    				newWaypoint.setIconResourceLoctaion(flagIcon);
+    				newWaypoint.setLabelColor(16777215); //White
+    				
+    				jmAPI.getWaypointGroupByName(AutoPortalWaypoints.MODID, "Portals").addWaypoint(newWaypoint);
     				//waypointgroup.addWaypoint(WaypointFactory.createClientWaypoint(AutoPortalWaypoints.MODID, level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()), "Spaceship" , destinationDim, true));
     				AutoPortalWaypoints.LOGGER.info("Spaceship marked at " + level.getHeightmapPos(Heightmap.Types.WORLD_SURFACE, Minecraft.getInstance().player.blockPosition()) + " in " + destinationDim);
     			} else {
@@ -315,6 +339,8 @@ public class AutoPortalWaypointsClient implements IClientPlugin{
 		ClientEventRegistry.MAPPING_EVENT.subscribe(AutoPortalWaypoints.MODID, this::mappingStageEvent);
 		
         AutoPortalWaypoints.LOGGER.info("Initialized " + getClass().getName());
+        waypointgroup.setShowBeacon(Config.BEACONS_ENABLED.get());
+        waypointgroup.setOverrideSettings(true);
         
         //NeoForge.EVENT_BUS.register(this);
 	}
