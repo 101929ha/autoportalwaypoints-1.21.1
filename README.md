@@ -10,6 +10,7 @@ Currently only avilable for NeoForge 1.21.1, 1.21.11 and 26.1+
 | JourneyMap                                                | ✅ (required) |
 | Infinite Dimensions                                       | ✅            |
 | Create: Northstar - Redux                                 | ✅            |
+| Stellaris                                                 | ✅            |
 | Immersive Portals for (Neo)Forge                          | ❌            |
 | Xaero's (Mini/World) Map                                  | ❌            |
 | Any mod that allows changing dimensions without a portal* | ❌            |
