@@ -1,3 +1,6 @@
+Depracated
+=======
+Please see https://github.com/101929ha/Auto-Portal-Waypoints
 
 Auto Portal Waypoints
 =======
